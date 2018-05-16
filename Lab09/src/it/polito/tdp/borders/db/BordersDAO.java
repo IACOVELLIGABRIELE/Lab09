@@ -23,7 +23,9 @@ public class BordersDAO {
 			ResultSet rs = st.executeQuery();
 
 			while (rs.next()) {
-				System.out.format("%d %s %s\n", rs.getInt("ccode"), rs.getString("StateAbb"), rs.getString("StateNme"));
+				//System.out.format("%d %s %s\n", rs.getInt("ccode"), rs.getString("StateAbb"), rs.getString("StateNme"));
+			    Country c =  new Country(rs.getString("StateNme"), rs.getInt("ccode"), rs.getString("StateAbb"));
+			    result.add(c);
 			}
 			
 			conn.close();
@@ -38,7 +40,41 @@ public class BordersDAO {
 
 	public List<Border> getCountryPairs(int anno) {
 
-		System.out.println("TODO -- BordersDAO -- getCountryPairs(int anno)");
-		return new ArrayList<Border>();
+		String sql = "SELECT * " + 
+				"FROM contiguity " + 
+				"WHERE contiguity.conttype = 1 " + 
+				"AND contiguity.year <= ? ";
+		
+		List<Border> result = new ArrayList<Border>();
+		
+		try {
+			Connection conn = ConnectDB.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, anno);
+			ResultSet rs = st.executeQuery();
+
+			while (rs.next()) {
+				Border b = new Border(rs.getInt("dyad"), rs.getInt("state1no"),
+						rs.getString("state1ab"), rs.getInt("state2no"),
+						rs.getString("state2ab"),rs.getInt("year"), 
+						rs.getInt("conttype"),rs.getFloat("version"));
+				result.add(b);
+				//System.out.format("%d %s %s\n", rs.getInt("ccode"), rs.getString("StateAbb"), rs.getString("StateNme"));
+			}
+			
+			conn.close();
+			return result;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Errore connessione al database");
+			throw new RuntimeException("Error Connection Database");
+		}
 	}
+	
+	/*SELECT COUNT(*) 
+FROM contiguity 
+WHERE contiguity.state1no = 2 
+AND contiguity.conttype = 1 
+AND contiguity.year <= 2000 */
 }

@@ -1,10 +1,5 @@
 package it.polito.tdp.borders.db;
 
-import java.util.List;
-
-import it.polito.tdp.borders.model.Country;
-import it.polito.tdp.borders.model.Border;
-
 public class TestDAO {
 
 	public static void main(String[] args) {
@@ -12,6 +7,13 @@ public class TestDAO {
 		BordersDAO dao = new BordersDAO();
 
 		System.out.println("Lista di tutte le nazioni:");
-		List<Country> countries = dao.loadAllCountries();
+		
+		System.out.println(dao.loadAllCountries().toString());
+		
+        System.out.println("Lista di tutti i confini :");
+		
+		System.out.println(dao.getCountryPairs(2000).toString());
+		
+		
 	}
 }
